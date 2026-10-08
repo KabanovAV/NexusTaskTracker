@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
 
 namespace NexusTaskTracker
 {
@@ -51,7 +53,7 @@ namespace NexusTaskTracker
                 else
                 {
                     task.Status = status;
-                    var options = new JsonSerializerOptions { WriteIndented = true };
+                    var options = new JsonSerializerOptions { Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic), WriteIndented = true };
                     File.WriteAllText(_filePath, JsonSerializer.Serialize(root, options));
                 }
             }
@@ -66,11 +68,12 @@ namespace NexusTaskTracker
             else
                 root = JsonSerializer.Deserialize<Root>(json) ?? new Root();
 
+            task.Status = TaskStatus.ToDo;
             task.CreatedAt = DateTime.Now;
             task.UpdatedAt = DateTime.Now;
 
             root.TaskTrackers.Add(task);
-            var options = new JsonSerializerOptions { WriteIndented = true };
+            var options = new JsonSerializerOptions { Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic), WriteIndented = true };
             File.WriteAllText(_filePath, JsonSerializer.Serialize(root, options));
         }
 
@@ -84,7 +87,7 @@ namespace NexusTaskTracker
             uTask.Status = task.Status;
             uTask.UpdatedAt = DateTime.Now;
 
-            var options = new JsonSerializerOptions { WriteIndented = true };
+            var options = new JsonSerializerOptions { Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic), WriteIndented = true };
             File.WriteAllText(_filePath, JsonSerializer.Serialize(root, options));
         }
 
@@ -94,7 +97,7 @@ namespace NexusTaskTracker
             var root = JsonSerializer.Deserialize<Root>(json);
             root!.TaskTrackers.Remove(task);
 
-            var options = new JsonSerializerOptions { WriteIndented = true };
+            var options = new JsonSerializerOptions { Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic), WriteIndented = true };
             File.WriteAllText(_filePath, JsonSerializer.Serialize(root, options));
         }
     }
