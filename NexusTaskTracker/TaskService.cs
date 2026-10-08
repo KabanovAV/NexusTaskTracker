@@ -39,7 +39,7 @@ namespace NexusTaskTracker
             }
         }
 
-        public void MarkTaskStatus(int id, TaskStatus status)
+        public void MarkTaskStatus(Guid id, TaskStatus status)
         {
             var json = File.ReadAllText(_filePath);
             if (string.IsNullOrWhiteSpace(json))
