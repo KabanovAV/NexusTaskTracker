@@ -1,4 +1,5 @@
-﻿using System.Text.Encodings.Web;
+﻿using System.Net.NetworkInformation;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 
@@ -13,6 +14,27 @@ namespace NexusTaskTracker
             _filePath = filePath;
             if (!File.Exists(_filePath))
                 using (File.Create(_filePath)) { }
+        }
+
+        public TaskTracker? GetTask(Guid id)
+        {
+            var json = File.ReadAllText(_filePath);
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                Console.WriteLine("Пустой список задач!");
+                return null;
+            }                
+            else
+            {
+                var root = JsonSerializer.Deserialize<Root>(json) ?? new Root();
+                var task = root.TaskTrackers.FirstOrDefault(t => t.Id == id);
+                if (task == null)
+                {
+                    Console.WriteLine("Задача не найдена!");
+                    return null;
+                }
+                return task;
+            }
         }
 
         public List<TaskTracker> GetAllTask()
@@ -49,7 +71,7 @@ namespace NexusTaskTracker
                 var root = JsonSerializer.Deserialize<Root>(json) ?? new Root();
                 var task = root.TaskTrackers.FirstOrDefault(t => t.Id == id);
                 if (task == null)
-                    Console.WriteLine("Задач не найдена!");
+                    Console.WriteLine("Задача не найдена!");
                 else
                 {
                     task.Status = status;
