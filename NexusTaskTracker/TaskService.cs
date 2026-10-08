@@ -1,5 +1,4 @@
-﻿using System.Net.NetworkInformation;
-using System.Text.Encodings.Web;
+﻿using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 
@@ -49,7 +48,7 @@ namespace NexusTaskTracker
             }
         }
 
-        public List<TaskTracker> GetTaskByStatus(TaskStatus status)
+        public List<TaskTracker> GetTaskByStatus(TaskTrackerStatus status)
         {
             var json = File.ReadAllText(_filePath);
             if (string.IsNullOrWhiteSpace(json))
@@ -61,7 +60,7 @@ namespace NexusTaskTracker
             }
         }
 
-        public void MarkTaskStatus(Guid id, TaskStatus status)
+        public void MarkTaskStatus(Guid id, TaskTrackerStatus status)
         {
             var json = File.ReadAllText(_filePath);
             if (string.IsNullOrWhiteSpace(json))
@@ -90,7 +89,7 @@ namespace NexusTaskTracker
             else
                 root = JsonSerializer.Deserialize<Root>(json) ?? new Root();
 
-            task.Status = TaskStatus.ToDo;
+            task.Status = TaskTrackerStatus.ToDo;
             task.CreatedAt = DateTime.Now;
             task.UpdatedAt = DateTime.Now;
 
