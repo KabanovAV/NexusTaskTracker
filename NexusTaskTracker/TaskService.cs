@@ -113,11 +113,11 @@ namespace NexusTaskTracker
             File.WriteAllText(_filePath, JsonSerializer.Serialize(root, options));
         }
 
-        public void RemoveTask(TaskTracker task)
+        public void RemoveTask(Guid id)
         {
             var json = File.ReadAllText(_filePath);
             var root = JsonSerializer.Deserialize<Root>(json);
-            root!.TaskTrackers.Remove(task);
+            root!.TaskTrackers.RemoveAll(t => t.Id == id);
 
             var options = new JsonSerializerOptions { Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic), WriteIndented = true };
             File.WriteAllText(_filePath, JsonSerializer.Serialize(root, options));

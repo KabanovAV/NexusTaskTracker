@@ -8,6 +8,6 @@
         void MarkTaskStatus(Guid id, TaskStatus status);
         void AddTask(TaskTracker task);
         void UpdateTask(TaskTracker task);
-        void RemoveTask(TaskTracker task);        
+        void RemoveTask(Guid id);        
     }
 }
