@@ -1,6 +1,6 @@
 ﻿namespace NexusTaskTracker
 {
-    public class Task
+    public class TaskTracker
     {
         public int Id { get; set; }
         public string Description { get; set; }
