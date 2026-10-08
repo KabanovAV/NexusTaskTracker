@@ -1,6 +1,6 @@
 ﻿namespace NexusTaskTracker
 {
-    public enum TaskStatus
+    public enum TaskTrackerStatus
     {
         ToDo,
         InProgress,
