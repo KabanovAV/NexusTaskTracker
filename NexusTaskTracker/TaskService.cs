@@ -15,53 +15,32 @@ namespace NexusTaskTracker
 
         public Result<TaskTracker> GetTask(Guid id)
         {
-            var root = LoadRoot();
-            if (root != null)
-            {
-                var task = root.TaskTrackers.FirstOrDefault(t => t.Id == id);
-                if (task != null)
-                    return Result.Success(task);
-                return Result.Failure<TaskTracker>(Error.NotFound($"Задача с идентификатором '{id}' не найдена"));
-            }
-            return Result.Failure<TaskTracker>(Error.Failure("В файле нет записей"));
+            var task = LoadRoot().TaskTrackers.FirstOrDefault(t => t.Id == id);
+            return task != null ? Result.Success(task) : Result.Failure<TaskTracker>(Error.NotFound($"Задача с идентификатором '{id}' не найдена"));
         }
 
         public Result<List<TaskTracker>> GetAllTask()
-        {
-            var root = LoadRoot();
-            if (root != null)
-                return Result.Success(root.TaskTrackers);
-            return Result.Success(new List<TaskTracker>());
-        }
+            => Result.Success(LoadRoot().TaskTrackers);
 
         public Result<List<TaskTracker>> GetTaskByStatus(TaskTrackerStatus status)
-        {
-            var root = LoadRoot();
-            if (root != null)
-                return Result.Success(root.TaskTrackers.Where(t => t.Status == status).ToList());
-            return Result.Success(new List<TaskTracker>());
-        }
+            => Result.Success(LoadRoot().TaskTrackers.Where(t => t.Status == status).ToList());
 
         public Result MarkTaskStatus(Guid id, TaskTrackerStatus status)
         {
             var root = LoadRoot();
-            if (root != null)
+            var task = root.TaskTrackers.FirstOrDefault(t => t.Id == id);
+            if (task != null)
             {
-                var task = root.TaskTrackers.FirstOrDefault(t => t.Id == id);
-                if (task != null)
-                {
-                    task.Status = status;
-                    _jsonFile.WriteJsonText(_filePath, root);
-                    return Result.Success(task);
-                }                
-                return Result.Failure(Error.NotFound($"Задача с идентификатором '{id}' не найдена"));
+                task.Status = status;
+                _jsonFile.WriteJsonText(_filePath, root);
+                return Result.Success(task);
             }
-            return Result.Failure(Error.Failure("В файле нет записей"));
+            return Result.Failure(Error.NotFound($"Задача с идентификатором '{id}' не найдена"));
         }
 
         public Result AddTask(TaskTracker task)
         {
-            var root = LoadRoot() ?? new();
+            var root = LoadRoot();
 
             task.Status = TaskTrackerStatus.ToDo;
             task.CreatedAt = DateTime.UtcNow;
@@ -76,43 +55,35 @@ namespace NexusTaskTracker
         public Result UpdateTask(TaskTracker task)
         {
             var root = LoadRoot();
-            if (root != null)
+            var uTask = root.TaskTrackers.FirstOrDefault(t => t.Id == task.Id);
+            if (uTask != null)
             {
-                var uTask = root.TaskTrackers.FirstOrDefault(t => t.Id == task.Id);
-                if (uTask != null)
-                {
-                    uTask.Description = task.Description;
-                    uTask.Status = task.Status;
-                    uTask.UpdatedAt = DateTime.UtcNow;
+                uTask.Description = task.Description;
+                uTask.Status = task.Status;
+                uTask.UpdatedAt = DateTime.UtcNow;
 
-                    _jsonFile.WriteJsonText(_filePath, root);
-                    return Result.Success();
-                }
-                return Result.Failure(Error.NotFound($"Задача с идентификатором '{task.Id}' не найдена"));
+                _jsonFile.WriteJsonText(_filePath, root);
+                return Result.Success();
             }
-            return Result.Failure(Error.Failure("В файле нет записей"));
+            return Result.Failure(Error.NotFound($"Задача с идентификатором '{task.Id}' не найдена"));
         }
 
         public Result RemoveTask(Guid id)
         {
             var root = LoadRoot();
-            if (root != null)
+            var isRemoved = root.TaskTrackers.RemoveAll(t => t.Id == id);
+            if (isRemoved > 0)
             {
-                var isRemoved = root.TaskTrackers.RemoveAll(t => t.Id == id);
-                if (isRemoved > 0)
-                {
-                    _jsonFile.WriteJsonText(_filePath, root);
-                    return Result.Success();
-                }
-                return Result.Failure(Error.NotFound($"Задача с идентификатором '{id}' не найдена"));
+                _jsonFile.WriteJsonText(_filePath, root);
+                return Result.Success();
             }
-            return Result.Failure(Error.Failure("В файле нет записей"));
+            return Result.Failure(Error.NotFound($"Задача с идентификатором '{id}' не найдена"));
         }
 
-        private Root? LoadRoot()
+        private Root LoadRoot()
         {
             var json = _jsonFile.ReadJsonText(_filePath);
-            return string.IsNullOrWhiteSpace(json) ? null : _jsonFile.DeserializeJson(json);
+            return string.IsNullOrWhiteSpace(json) ? new Root() : _jsonFile.DeserializeJson(json);
         }
     }
 }
