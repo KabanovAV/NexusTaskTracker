@@ -4,35 +4,35 @@ string filePath = "task-tracker.json";
 TaskService service = new(filePath);
 
 // Добавление задачи
-
-//TaskTracker task = new() { Id = Guid.NewGuid(), Description = "Удалить задачу" };
-//service.AddTask(task);
+Guid id = Guid.NewGuid();
+TaskTracker nTask = new() { Id = id, Description = "Новая задача" };
+service.AddTask(nTask);
+Console.WriteLine($"Добавлена новая задача: Описание - {nTask.Description} Статус - {nTask.Status}");
 
 // Обновление задачи
-
-//var id = Guid.Parse("cdab405e-76d9-4ee0-ae33-5aa410778ee8");
-//var task = service.GetTask(id);
-//task.Description = "Выключить плиту после готовки";
-//service.UpdateTask(task);
-
-// Удаление задачи
-
-//var id = Guid.Parse("bc87c20d-c70a-495d-93ac-92bf3e903526");
-//service.RemoveTask(id);
+var task = service.GetTask(id);
+if(task == null)
+    Console.WriteLine("Задача не найдена!");
+else
+{
+    task.Description = "Обновленная задача";
+    service.UpdateTask(task);
+    Console.WriteLine($"Обновлена задача: Описание - {task.Description} Статус - {task.Status}");
+}
 
 // Изменение статуса
+service.MarkTaskStatus(id, TaskTrackerStatus.Done);
 
-//var id = Guid.Parse("feabd079-1aea-4081-88db-5d6361372a4f");
-//service.MarkTaskStatus(id, TaskTrackerStatus.Done);
+// Удаление задачи
+service.RemoveTask(id);
 
 // Получение задач
-
 var tasks = service.GetAllTask();
-foreach (var task in tasks)
-    Console.WriteLine($"Id: {task.Id} Description: {task.Description} Status: {task.Status}");
+foreach (var item in tasks)
+    Console.WriteLine($"Id: {item.Id} Описание: {item.Description} Статус: {item.Status}");
 
 Console.WriteLine();
 
 var tasksStatus = service.GetTaskByStatus(TaskTrackerStatus.ToDo);
-foreach (var task in tasksStatus)
-    Console.WriteLine($"Id: {task.Id} Description: {task.Description} Status: {task.Status}");
+foreach (var item in tasksStatus)
+    Console.WriteLine($"Id: {item.Id} Описание: {item.Description} Статус: {item.Status}");
