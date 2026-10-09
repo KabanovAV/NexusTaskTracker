@@ -33,7 +33,7 @@ namespace NexusTaskTracker
             {
                 task.Status = status;
                 _jsonFile.WriteJsonText(_filePath, root);
-                return Result.Success(task);
+                return Result.Success();
             }
             return Result.Failure(Error.NotFound($"Задача с идентификатором '{id}' не найдена"));
         }
@@ -59,7 +59,6 @@ namespace NexusTaskTracker
             if (uTask != null)
             {
                 uTask.Description = task.Description;
-                uTask.Status = task.Status;
                 uTask.UpdatedAt = DateTime.UtcNow;
 
                 _jsonFile.WriteJsonText(_filePath, root);
