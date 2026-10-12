@@ -11,13 +11,13 @@ Console.WriteLine($"Добавлена новая задача: Описание
 
 // Обновление задачи
 var task = service.GetTask(id);
-if(task == null)
-    Console.WriteLine("Задача не найдена!");
+if(task.IsFailure)
+    Console.WriteLine(task.Error.Description);
 else
 {
-    task.Description = "Обновленная задача";
-    service.UpdateTask(task);
-    Console.WriteLine($"Обновлена задача: Описание - {task.Description} Статус - {task.Status}");
+    task.Value.Description = "Обновленная задача";
+    service.UpdateTask(task.Value);
+    Console.WriteLine($"Обновлена задача: Описание - {task.Value.Description} Статус - {task.Value.Status}");
 }
 
 // Изменение статуса
@@ -28,11 +28,11 @@ service.RemoveTask(id);
 
 // Получение задач
 var tasks = service.GetAllTask();
-foreach (var item in tasks)
+foreach (var item in tasks.Value)
     Console.WriteLine($"Id: {item.Id} Описание: {item.Description} Статус: {item.Status}");
 
 Console.WriteLine();
 
 var tasksStatus = service.GetTaskByStatus(TaskTrackerStatus.ToDo);
-foreach (var item in tasksStatus)
+foreach (var item in tasksStatus.Value)
     Console.WriteLine($"Id: {item.Id} Описание: {item.Description} Статус: {item.Status}");
