@@ -34,5 +34,11 @@ namespace NexusTaskTracker
         {
             _value = value;
         }
+
+        [NotNull]
+        public TValue Value => IsSuccess ? _value! : throw new InvalidOperationException("Значение результата ошибки недоступно.");
+
+        public static implicit operator Result<TValue>(TValue? value)
+            => value is not null ? Success(value) : Failure<TValue>(Error.NullValue);
     }
 }
