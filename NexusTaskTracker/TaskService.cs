@@ -16,14 +16,14 @@ namespace NexusTaskTracker
         public Result<TaskTracker> GetTask(Guid id)
         {
             var task = LoadRoot().TaskTrackers.FirstOrDefault(t => t.Id == id);
-            return task != null ? Result.Success(task) : Result.Failure<TaskTracker>(Error.NotFound($"Задача с идентификатором '{id}' не найдена"));
+            return task ?? Result.Failure<TaskTracker>(Error.NotFound($"Задача с идентификатором '{id}' не найдена"));
         }
 
         public Result<List<TaskTracker>> GetAllTask()
-            => Result.Success(LoadRoot().TaskTrackers);
+            => LoadRoot().TaskTrackers;
 
         public Result<List<TaskTracker>> GetTaskByStatus(TaskTrackerStatus status)
-            => Result.Success(LoadRoot().TaskTrackers.Where(t => t.Status == status).ToList());
+            => LoadRoot().TaskTrackers.Where(t => t.Status == status).ToList();
 
         public Result MarkTaskStatus(Guid id, TaskTrackerStatus status)
         {
